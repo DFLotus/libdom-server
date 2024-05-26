@@ -1,4 +1,4 @@
-package com.example.libdom_server;
+package com.example;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
