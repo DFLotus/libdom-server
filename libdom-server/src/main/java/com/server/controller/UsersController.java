@@ -26,6 +26,14 @@ public class UsersController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserJson userJson) {
+        if (userJson.getUsername() != null && userJson.getUsername().isEmpty()
+                || userJson.getPassword() != null && userJson.getPassword().isEmpty()
+                || userJson.getEmail() != null && userJson.getEmail().isEmpty()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Empty response");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
         Users newUser = new Users();
         newUser.setUsername(userJson.getUsername());
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
@@ -43,4 +51,5 @@ public class UsersController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
+
 }
