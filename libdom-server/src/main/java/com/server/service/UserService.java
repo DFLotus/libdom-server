@@ -1,5 +1,8 @@
 package com.server.service;
 
+import java.util.Optional;
+
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +51,30 @@ public class UserService {
 
         } catch (Error e) {
             throw new Exception("Failed to id user with error: ", e);
+        }
+    }
+
+    public Boolean updatePassword(ObjectId userId, String password) throws Exception {
+        try {
+            Optional<Users> optionalUser = this.userRepository.findById(userId);
+
+            if (!optionalUser.isPresent()) {
+                throw new Exception("User not found");
+            }
+
+            final Users user = optionalUser.get();
+
+            BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+            String encrpyedPassword = bcrypt.encode(password);
+            user.setPassword(encrpyedPassword);
+            this.userRepository.save(user);
+            // Update password and return true
+            return true;
+
+        } catch (IllegalArgumentException e) {
+            throw new Exception("Incorrect value for userId ", e);
+        } catch (Error e) {
+            throw new Exception("Failed to identify user", e);
         }
     }
 
