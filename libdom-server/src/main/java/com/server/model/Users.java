@@ -10,8 +10,9 @@ public class Users {
     @Id
     private ObjectId id;
 
+    @Indexed(unique = true)
     private String username;
-    
+
     @Indexed(unique = true)
     private String email;
 

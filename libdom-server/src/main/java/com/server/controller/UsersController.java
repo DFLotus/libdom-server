@@ -13,8 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping("/user")
 public class UsersController {
     @Autowired
     private UserService userService;
@@ -48,6 +50,24 @@ public class UsersController {
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Failed to fetch. " + e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> userLogin(@RequestBody UserJson userJson) {
+        if (userJson.getUsername() != null && userJson.getUsername().isEmpty()
+                || userJson.getPassword() != null && userJson.getPassword().isEmpty()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Empty response");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        try {
+            Users foundUser = this.userService.userLogin(userJson.getUsername(), userJson.getPassword());
+            return ResponseEntity.status(201).body(foundUser);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to login with error: " + e.getMessage());
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
