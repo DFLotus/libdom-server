@@ -64,7 +64,13 @@ public class UsersController {
         }
         try {
             Users foundUser = this.userService.userLogin(userJson.getUsername(), userJson.getPassword());
-            return ResponseEntity.status(201).body(foundUser);
+            HashMap<String, String> userInfo = new HashMap<>();
+            userInfo.put("username", foundUser.getUsername());
+            userInfo.put("email", foundUser.getEmail());
+            userInfo.putIfAbsent("profile_picture", foundUser.getProfilePictureUrl());
+            userInfo.put("user_id", String.valueOf(foundUser.getId()));
+
+            return ResponseEntity.status(201).body(userInfo);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Failed to login with error: " + e.getMessage());

@@ -25,6 +25,8 @@ public class UserService {
             return this.userRepository.save(user);
         } catch (DuplicateKeyException e) {
             throw new Exception("Email already exists", e);
+        } catch (Error e) {
+            throw new Exception("Failed to register user with error: ", e);
         }
     }
 
