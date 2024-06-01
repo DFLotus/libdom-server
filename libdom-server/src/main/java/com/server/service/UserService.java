@@ -14,6 +14,12 @@ public class UserService {
 
     public Users registerUser(Users user) throws Exception {
         try {
+            Users existingUser = this.userRepository.findByEmail(user.getEmail());
+
+            if (existingUser != null) {
+                throw new Exception("Email already exists");
+            }
+
             return this.userRepository.save(user);
         } catch (DuplicateKeyException e) {
             throw new Exception("Email already exists", e);
