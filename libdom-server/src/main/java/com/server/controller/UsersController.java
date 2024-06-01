@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -18,6 +19,7 @@ public class UsersController {
     @Autowired
     private UserService userService;
 
+    @Autowired
     public UsersController(UserService userService) {
         this.userService = userService;
     }
@@ -26,7 +28,9 @@ public class UsersController {
     public ResponseEntity<?> registerUser(@RequestBody UserJson userJson) {
         Users newUser = new Users();
         newUser.setUsername(userJson.getUsername());
-        newUser.setPassword(userJson.getPassword());
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String encrpyedPassword = bcrypt.encode(userJson.getPassword());
+        newUser.setPassword(encrpyedPassword);
         newUser.setEmail(userJson.getEmail());
         newUser.setProfilePictureUrl(userJson.getProfilePictureUrl());
 
@@ -39,5 +43,4 @@ public class UsersController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
-
 }
